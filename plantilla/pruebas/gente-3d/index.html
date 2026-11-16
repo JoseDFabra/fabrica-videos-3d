@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="lib/vendor/three-r158.min.js"></script>
+<script src="tiempos.js"></script>
+<script src="lib/fabrica.js"></script>
+<script src="lib/gente3d.js"></script>
+<script src="demo.js"></script>
+<link rel="stylesheet" href="lib/marca.css">
+<link rel="stylesheet" href="lib/fabrica.css">
+<style>
+  /* Demo de componentes/gente3d.js (GENTE3D.md): una fila de 40 personas fastidiadas en una página web, cámara que
+     sube como un dron, cajas con barras de carga, una 4.ª caja que aparece y el portero que reparte. Sin voz. */
+  :root { --fondo: #0b1220; --tinta: #f1f5f9; --tinta-2: #94a3b8; --tarjeta: #111827; --linea: #263244; --marca: #7b86f0; }
+  #root { color: var(--tinta); background: radial-gradient(circle, rgba(148,163,184,.10) 2px, transparent 2.5px) 0 0 / 44px 44px,
+    radial-gradient(90% 60% at 50% 50%, #142036 0%, #0b1220 70%); overflow: hidden; }
+  #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; z-index: 2; }
+  .chip { position: absolute; padding: 16px 30px; border-radius: 26px; background: var(--tarjeta);
+    border: 3px solid var(--linea); font: 750 44px/1 var(--titulo-fuente); font-stretch: 106%; white-space: nowrap; z-index: 4; }
+  #titulo { top: 150px; left: 50%; transform: translateX(-50%); color: var(--tinta-2); font-size: 36px; }
+  #titulo b { color: var(--tinta); }
+  .sigue { left: 0; top: 0; transform: translate(-50%, -100%); color: var(--marca); border-color: var(--marca); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="prueba-gente-3d" data-start="0" data-duration="10" data-width="1080" data-height="1920" data-motion-blur="off">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="titulo" class="chip"><b>Gente 3D</b> · demo del componente</div>
+  <div id="r-heroe" class="chip sigue">espera-fastidio</div>
+  <div id="r-caja" class="chip sigue">Caja 4</div>
+  <div id="r-portero" class="chip sigue">portero</div>
+</div>
+<script>
+  const fx = Fabrica.crear("prueba-gente-3d");
+  const { tl, $ } = fx;
+  // La 3D va en try/catch: si no hay WebGL, el timeline igual se registra (y lo HTML se puede revisar).
+  try {
+    const esc = Gente3D.escena("#gl", { piso: false });
+    const d = DEMO.armarDemo(esc, Gente3D);
+    // Rótulos HTML pegados a cosas 3D (esc.aPantalla): se dibujan después del 3D, en el mismo reloj.
+    const pega = (sel, punto, dy = 30) => { const el = $(sel); return (t) => { const s = esc.aPantalla(punto(t)); el.style.left = s.x + "px"; el.style.top = (s.y - dy) + "px"; }; };
+    const rotulos = [
+      pega("#r-heroe", (t) => [d.heroe.punto("cabeza")[0] - 0.12, d.heroe.punto("cabeza")[1] + 0.02, d.heroe.punto("cabeza")[2]], 10),
+      pega("#r-caja", () => d.cajas[3].puntoBarra(), 24),
+      pega("#r-portero", () => d.portero.punto("cabeza"), 30),
+    ];
+    fx.dibuja((t) => { esc.dibujar(t); rotulos.forEach((f) => f(t)); });
+  } catch (e) { console.warn("3D apagado:", e); }
+  const muestra = (sel, a, b) => { tl.fromTo(sel, { opacity: 0 }, { opacity: 1, duration: 0.25, ease: "power2.out", immediateRender: false }, a); fx.sale(sel, b, 0.2); };
+  tl.set(".sigue", { opacity: 0 }, 0);
+  muestra("#r-heroe", 0.3, 1.9);
+  muestra("#r-caja", DEMO.ABRE + 0.35, 7.6);
+  muestra("#r-portero", DEMO.ABRE + 0.6, 7.6);
+  window.__timelines = window.__timelines || {};
+  window.__timelines["prueba-gente-3d"] = fx.fin();
+</script>
+</body>
+</html>

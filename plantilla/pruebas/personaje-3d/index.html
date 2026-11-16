@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<script src="lib/vendor/three-r158.min.js"></script>
+<script src="tiempos.js"></script>
+<script src="lib/fabrica.js"></script>
+<script src="lib/personaje3d.js"></script>
+<script src="demo.js"></script>
+<link rel="stylesheet" href="lib/marca.css">
+<link rel="stylesheet" href="lib/fabrica.css">
+<style>
+  /* Demo de componentes/personaje3d.js (PERSONAJE3D.md): una persona en 3D en su escritorio, cámara que orbita y las
+     poses en secuencia, sobre el oscuro sobrio de Fabra Studios (el de los videos 15–16). Sin voz. */
+  :root { --fondo: #0b1220; --tinta: #f1f5f9; --tinta-2: #94a3b8; --tarjeta: #111827; --linea: #263244; --marca: #7b86f0; }
+  #root { color: var(--tinta); background: radial-gradient(circle, rgba(148,163,184,.10) 2px, transparent 2.5px) 0 0 / 44px 44px,
+    radial-gradient(90% 60% at 50% 50%, #142036 0%, #0b1220 70%); overflow: hidden; }
+  #gl { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; z-index: 2; }
+  .chip { position: absolute; left: 50%; transform: translateX(-50%); padding: 16px 30px; border-radius: 26px; background: var(--tarjeta);
+    border: 3px solid var(--linea); font: 750 44px/1 var(--titulo-fuente); font-stretch: 106%; white-space: nowrap; z-index: 4; }
+  #titulo { top: 290px; color: var(--tinta-2); font-size: 36px; }
+  #titulo b { color: var(--tinta); }
+  .pose { top: 1540px; color: var(--marca); border-color: var(--marca); opacity: 0; }
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="prueba-personaje-3d" data-start="0" data-duration="12.5" data-width="1080" data-height="1920" data-motion-blur="off">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <div id="titulo" class="chip"><b>Personaje 3D</b> · demo del componente</div>
+  <div class="chip pose" id="p0">escribe</div>
+  <div class="chip pose" id="p1">mira-celular</div>
+  <div class="chip pose" id="p2">sorpresa</div>
+  <div class="chip pose" id="p3">preocupado</div>
+  <div class="chip pose" id="p4">piensa</div>
+  <div class="chip pose" id="p5">celebra</div>
+  <div class="chip pose" id="p6">respira</div>
+</div>
+<script>
+  const fx = Fabrica.crear("prueba-personaje-3d");
+  const { tl } = fx;
+  // La 3D va en try/catch: si no hay WebGL, el timeline igual se registra (y lo HTML se puede revisar).
+  try {
+    const esc = Personaje3D.escena("#gl");
+    DEMO.armarDemo(esc, Personaje3D);
+    fx.dibuja((t) => esc.dibujar(t));
+  } catch (e) { console.warn("3D apagado:", e); }
+  // Rótulo con el nombre de la pose (solo en la demo).
+  DEMO.SECUENCIA.forEach(([n, a, b], i) => {
+    tl.fromTo("#p" + i, { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out" }, a + 0.05);
+    if (i < DEMO.SECUENCIA.length - 1) fx.sale("#p" + i, b - 0.2, 0.2);
+  });
+  window.__timelines = window.__timelines || {};
+  window.__timelines["prueba-personaje-3d"] = fx.fin();
+</script>
+</body>
+</html>

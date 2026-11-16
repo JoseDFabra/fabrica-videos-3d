@@ -1,0 +1,82 @@
+/* Piezas comunes de las composiciones (1080×1920). Los colores y fuentes vienen de la marca (lib/marca.css). */
+* { box-sizing: border-box; margin: 0; }
+body { background: var(--fondo); }
+#root { position: relative; width: 1080px; height: 1920px; overflow: hidden; isolation: isolate; background: var(--fondo);
+  font-family: var(--texto-fuente), sans-serif; color: var(--blanco); }
+.abs { position: absolute; }
+.oculto { opacity: 0; }
+#camara { position: absolute; inset: 0; transform-origin: 540px 960px; }
+#lienzo { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+#fuegos { position: absolute; inset: 0; z-index: 6; pointer-events: none; }
+
+/* Franja segura de Reels/TikTok: arriba ~250 px y abajo ~420 px los tapa la interfaz. Lo importante va entre 250 y 1500. */
+.zona-segura { position: absolute; left: 60px; right: 120px; top: 250px; bottom: 420px; }
+
+/* Fondo noche con cuadrícula (videos 10–12). */
+#luz { position: absolute; inset: 0; background: radial-gradient(90% 55% at 50% 48%, #18203a 0%, #0b0f1c 55%, var(--fondo) 100%); }
+#cuadricula { position: absolute; left: -90px; right: -90px; top: -180px; height: 2400px; opacity: .55;
+  background-image: linear-gradient(rgba(148,163,184,.07) 2px, transparent 2px), linear-gradient(90deg, rgba(148,163,184,.07) 2px, transparent 2px);
+  background-size: 90px 90px;
+  -webkit-mask-image: radial-gradient(70% 45% at 50% 45%, #000 20%, transparent 100%); mask-image: radial-gradient(70% 45% at 50% 45%, #000 20%, transparent 100%); }
+#cielo { position: absolute; inset: 0; }
+
+/* Subtítulos SIN FONDO (regla del dueño, 2026-11-03: «no quiero más fondos para títulos»; la píldora/degradado tapaba
+   las animaciones). Se leen por el borde oscuro del texto. #subs-fondo queda solo por compatibilidad, siempre oculto. */
+#subs-fondo { display: none; }
+#subs { position: absolute; left: 50px; right: 50px; top: 250px; height: 220px; z-index: 7; }
+.grupo { position: absolute; inset: 0; display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 0 26px;
+  font: 800 88px/1.04 var(--titulo-fuente); letter-spacing: -2px; text-align: center; opacity: 0; }
+.grupo span { display: inline-block; color: var(--blanco); -webkit-text-stroke: 12px #070c17; paint-order: stroke fill; text-shadow: 0 6px 18px rgba(0,0,0,.75), 0 0 2px #070c17; }
+.grupo.karaoke span { opacity: .32; }
+/* Caja de selección estilo Figma sobre las palabras clave (--caja va de 0 a 1). */
+.sel { position: relative; font-weight: inherit; padding: 0 10px; --caja: 0; }
+.sel::before { content: ""; position: absolute; inset: -4px -2px; border: 4px solid var(--seleccion); border-radius: 4px;
+  background: color-mix(in srgb, var(--seleccion) 18%, transparent); opacity: var(--caja); transform: scale(calc(.85 + .15 * var(--caja))); }
+.sel i { position: absolute; width: 16px; height: 16px; background: #fff; border: 4px solid var(--seleccion); opacity: var(--caja); }
+.sel i:nth-child(1) { left: -10px; top: -12px; } .sel i:nth-child(2) { right: -10px; top: -12px; }
+.sel i:nth-child(3) { left: -10px; bottom: -12px; } .sel i:nth-child(4) { right: -10px; bottom: -12px; }
+
+/* Rótulo técnico: línea fina + texto en mayúsculas espaciadas. */
+.rotulo { position: absolute; display: flex; align-items: center; gap: 14px; z-index: 5; }
+.rotulo .linea { display: block; width: var(--largo, 90px); height: 3px; background: var(--rotulo, #e2e8f0); transform-origin: 0 50%; }
+.rotulo.izq { flex-direction: row-reverse; } .rotulo.izq .linea { transform-origin: 100% 50%; }
+.rotulo span { font: 800 40px/1 var(--texto-fuente); letter-spacing: 6px; text-transform: uppercase; color: var(--rotulo, #e2e8f0); white-space: nowrap; }
+
+/* Fotos, etiquetas, sellos, chips. */
+.foto { position: absolute; border-radius: 34px; overflow: hidden; background: #000; border: 2px solid var(--borde); box-shadow: 0 40px 100px rgba(0,0,0,.6); }
+.foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: 50% 40%; }
+.etiqueta { position: absolute; padding: 16px 26px; border-radius: 22px; background: rgba(15,20,35,.94); border: 2px solid var(--borde); box-shadow: 0 20px 50px rgba(0,0,0,.5); }
+.etiqueta b { display: block; font: 800 46px/1.05 var(--titulo-fuente); letter-spacing: -1px; }
+.etiqueta small { display: block; font: 600 30px/1.25 var(--texto-fuente); color: var(--gris); margin-top: 6px; }
+.sello { position: absolute; padding: 10px 30px; border: 8px solid var(--acento); border-radius: 22px; color: var(--acento);
+  font: 800 120px/1 var(--titulo-fuente); letter-spacing: -3px; background: rgba(7,9,15,.88); transform: rotate(-8deg); z-index: 5; box-shadow: 0 0 60px color-mix(in srgb, var(--acento) 45%, transparent); }
+.chip { position: absolute; padding: 12px 22px; border-radius: 30px; font: 800 34px/1 var(--titulo-fuente); z-index: 5; }
+.chip.no { background: #3b0d0d; border: 3px solid var(--error); color: var(--error); }
+.chip.si { background: #052e16; border: 3px solid var(--verde); color: var(--verde); }
+.grande { position: absolute; left: 0; right: 0; text-align: center; font: 800 280px/1 var(--titulo-fuente); letter-spacing: -10px; color: transparent;
+  -webkit-text-stroke: 4px var(--acento); z-index: 4; }
+
+/* Personaje: --mece y --respira los mueve fx.personaje(). Las poses son <img data-pose> apiladas. */
+.personaje { position: absolute; transform-origin: 50% 100%; }
+.personaje .salto { position: absolute; inset: 0; transform-origin: 50% 100%; }
+.personaje .cuerpo { position: absolute; inset: 0; transform-origin: 50% 100%; transform: rotate(var(--mece, 0deg)) scaleY(var(--respira, 1)); }
+.personaje img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+
+/* Celular. */
+.tel { position: absolute; width: 640px; height: 1300px; border-radius: 100px; background: #000; padding: 16px;
+  box-shadow: 0 0 0 4px #475569, 0 0 0 7px #1e293b, 0 60px 140px rgba(0,0,0,.7); transform-origin: 50% 0; }
+.tel .pantalla { position: relative; width: 100%; height: 100%; border-radius: 86px; overflow: hidden; background: #fff; color: #0f172a; }
+.tel .isla { position: absolute; left: 50%; top: 18px; width: 180px; height: 52px; margin-left: -90px; border-radius: 26px; background: #000; z-index: 20; }
+.tel .capa { position: absolute; inset: 0; background: #fff; overflow: hidden; isolation: isolate; }
+
+/* Cierre de marca. */
+#cierre { position: absolute; inset: 0; z-index: 8; }
+#cierre .icono { position: absolute; left: 410px; top: 560px; width: 260px; height: 260px; border-radius: 62px; background: var(--acento) var(--icono) center / 74% auto no-repeat;
+  box-shadow: 0 30px 90px color-mix(in srgb, var(--acento) 55%, transparent), 0 0 0 3px rgba(255,255,255,.15); }
+#cierre .ya { position: absolute; left: 0; right: 0; top: 440px; text-align: center; }
+#cierre .ya span { display: inline-block; padding: 16px 38px; border-radius: 50px; background: var(--verde); color: #04210f; font: 800 54px/1 var(--titulo-fuente); }
+#cierre .nombre { position: absolute; left: 0; right: 0; top: 850px; text-align: center; font: 800 124px/1 var(--titulo-fuente); letter-spacing: -4px; }
+#cierre .tiendas { position: absolute; left: 0; right: 0; top: 1010px; display: flex; justify-content: center; gap: 24px; }
+#cierre .tiendas img { height: 104px; }
+#cierre .cta { position: absolute; left: 60px; right: 60px; text-align: center; font: 800 58px/1.1 var(--titulo-fuente); letter-spacing: -1px; }
+#cierre .cta em { font-style: normal; color: var(--acento); }
